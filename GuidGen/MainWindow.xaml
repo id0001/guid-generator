@@ -3,41 +3,58 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:GuidGen"
+        xmlns:local="clr-namespace:GuidGen" 
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
-        Title="GUID Generator" Height="300" Width="280" ResizeMode="NoResize" WindowStyle="SingleBorderWindow">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="60" />
-            <RowDefinition Height="auto" />
-        </Grid.RowDefinitions>
+        Title="GUID Generator" Height="300" Width="280" ResizeMode="NoResize" WindowStyle="SingleBorderWindow" Topmost="{Binding TopMost}">
+    <Window.Resources>
+        <sys:String x:Key="ButtonNullValue">Generate Guid</sys:String>
+    </Window.Resources>
 
-        <ListBox Grid.Row="0" x:Name="History" HorizontalContentAlignment="Center" SelectionChanged="History_SelectionChanged">
-            <ListBox.Triggers>
-                <EventTrigger RoutedEvent="ListBox.SelectionChanged">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation Storyboard.TargetName="StatusBar" Storyboard.TargetProperty="(UIElement.Opacity)" From="1.0" To="0.0" Duration="0:0:1" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </ListBox.Triggers>
-        </ListBox>
-        <Button Grid.Row="1" x:Name="GenerateButton"  Click="GenerateButton_Click" Content="Generate Guid">
-            <Button.Triggers>
-                <EventTrigger RoutedEvent="Button.Click">
-                    <BeginStoryboard>
-                        <Storyboard>
-                            <DoubleAnimation Storyboard.TargetName="StatusBar" Storyboard.TargetProperty="(UIElement.Opacity)" From="1.0" To="0.0" Duration="0:0:1" />
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </Button.Triggers>
-        </Button>
+    <DockPanel>
 
-        <TextBlock Grid.RowSpan="3" Padding="30" Background="LightGray" x:Name="StatusBar" TextAlignment="Center" VerticalAlignment="Center" Foreground="Green" FontWeight="Bold" Opacity="0" Text="Guid Copied!" HorizontalAlignment="Center" IsHitTestVisible="False"></TextBlock>
-    </Grid>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="_Options">
+                <MenuItem x:Name="TopMostOption" Header="_Topmost" IsCheckable="True" IsChecked="{Binding TopMost}" />
+                <MenuItem x:Name="AllCapsOption" Header="_All caps" IsCheckable="True" IsChecked="{Binding AllCaps}"/>
+            </MenuItem>
+        </Menu>
 
-    
+        <Grid DockPanel.Dock="Bottom">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="60" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <ListBox Grid.Row="0" x:Name="History" HorizontalContentAlignment="Center" ItemsSource="{Binding History}" SelectedItem="{Binding CurrentGuid, Mode=TwoWay}">
+                <ListBox.Triggers>
+                    <EventTrigger RoutedEvent="ListBox.SelectionChanged">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="StatusBar" Storyboard.TargetProperty="(UIElement.Opacity)" From="1.0" To="0.0" Duration="0:0:1" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </ListBox.Triggers>
+            </ListBox>
+            <Button Grid.Row="1" x:Name="GenerateButton"  Command="{Binding GenerateGuidCommand}" Content="{Binding Path=CurrentGuid, TargetNullValue={StaticResource ButtonNullValue}}">
+                <Button.Triggers>
+                    <EventTrigger RoutedEvent="Button.Click">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Storyboard.TargetName="StatusBar" Storyboard.TargetProperty="(UIElement.Opacity)" From="1.0" To="0.0" Duration="0:0:1" />
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Button.Triggers>
+            </Button>
+
+            <TextBlock Grid.RowSpan="3" Padding="30" Background="LightGray" x:Name="StatusBar" TextAlignment="Center" VerticalAlignment="Center" Foreground="Green" FontWeight="Bold" Opacity="0" Text="Guid Copied!" HorizontalAlignment="Center" IsHitTestVisible="False"></TextBlock>
+        </Grid>
+    </DockPanel>
+
+
+
+
 </Window>
